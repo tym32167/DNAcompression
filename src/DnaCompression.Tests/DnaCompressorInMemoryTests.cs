@@ -1,11 +1,14 @@
 ﻿using DnaCompression.Lib;
 using NUnit.Framework;
+using System;
 
 namespace DnaCompression.Tests
 {
     [TestFixture]
     public class DnaCompressorInMemoryTests
     {
+        private readonly IProgress<int> _progress = new Progress<int>();
+
         [Test]
         public void SampleTest1()
         {
@@ -13,7 +16,7 @@ namespace DnaCompression.Tests
             var compressor = new DnaCompressor();
             var expected = new[] { "MG", "HH", null, null, null, null, null, null, null, null, null };
 
-            compressor.Compress(lines);
+            compressor.Compress(lines, _progress);
 
             CollectionAssert.AreEquivalent(expected, lines);
         }
@@ -26,7 +29,7 @@ namespace DnaCompression.Tests
             var compressor = new DnaCompressor();
             var expected = new[] { "YA", "HY", null, null, null, null, null, null, null };
 
-            compressor.Compress(lines);
+            compressor.Compress(lines, _progress);
 
             CollectionAssert.AreEquivalent(expected, lines);
         }
@@ -38,7 +41,7 @@ namespace DnaCompression.Tests
             var compressor = new DnaCompressor();
             var expected = new[] { "HH", null, null, null, null, null, null, null, null };
 
-            compressor.Compress(lines);
+            compressor.Compress(lines, _progress);
 
             CollectionAssert.AreEquivalent(expected, lines);
         }
@@ -50,7 +53,7 @@ namespace DnaCompression.Tests
             var compressor = new DnaCompressor();
             var expected = new[] { "AAGCTC", "RAGCTT", null };
 
-            compressor.Compress(lines);
+            compressor.Compress(lines, _progress);
 
             CollectionAssert.AreEquivalent(expected, lines);
         }

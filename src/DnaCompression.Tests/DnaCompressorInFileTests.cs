@@ -1,4 +1,5 @@
-﻿using DnaCompression.Lib;
+﻿using System;
+using DnaCompression.Lib;
 using NUnit.Framework;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,8 @@ namespace DnaCompression.Tests
     [TestFixture]
     public class DnaCompressorInFileTests
     {
+        private readonly IProgress<int> _progress = new Progress<int>();
+
         [Test]
         public void SampleTest1()
         {
@@ -16,7 +19,7 @@ namespace DnaCompression.Tests
             var compressor = new DnaCompressor();
             var expected = File.ReadAllLines(Path.Combine(TestContext.CurrentContext.TestDirectory, @"Data\94x10_output_14.txt"));
 
-            compressor.Compress(lines);
+            compressor.Compress(lines, _progress);
 
             CollectionAssert.AreEquivalent(expected, lines.Where(l => l != null));
         }
@@ -29,7 +32,7 @@ namespace DnaCompression.Tests
             var compressor = new DnaCompressor();
             var expected = File.ReadAllLines(Path.Combine(TestContext.CurrentContext.TestDirectory, @"Data\615x10_output_17.txt"));
 
-            compressor.Compress(lines);
+            compressor.Compress(lines, _progress);
 
             CollectionAssert.AreEquivalent(expected, lines.Where(l => l != null));
         }
