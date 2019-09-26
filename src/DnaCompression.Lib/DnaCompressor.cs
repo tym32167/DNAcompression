@@ -6,19 +6,7 @@ namespace DnaCompression.Lib
     {
         public void Compress(string[] lines)
         {
-            // var fname = @"C:\UBS\Dev\temp\DNA\primers_NebulaMascXXXin.txt";
-            // var fname = @"D:\temp\dna\in_small.txt";
-            // var fname = @"D:\temp\dna\primers23.txt";
-            // var lines = File.ReadAllLines(fname);
-
-            // var lines = new[] {"AAGCTT","AAGCTC","GAGCTT"};
-            // var lines = new[] {"CA","AC","AT","CA","CC","CT","TA","TC","TT",};
-            // var lines = new[] { "AA", "AC", "AT", "AG", "CA", "CC", "CT", "CG", "TA", "TC", "TT", };
-
-            // Enum.GetValues(typeof(Types)).Cast<int>().ToArray().Dump();
-
             var tmp = new string[lines.Length];
-
 
             int n = lines.Length;
 
@@ -26,22 +14,19 @@ namespace DnaCompression.Lib
 
             var sorter = new CountingSort();
 
-
             for (var pos = 0; pos < maxpos; pos++)
             {
-                sorter.sort(lines, lines[0].Length, pos, n, tmp);
+                sorter.Sort(lines, lines[0].Length, pos, n, tmp);
 
                 var ind = 0;
 
                 while (ind < lines.Length && lines[ind] != null)
                 {
                     int start = ind;
-
                     while (ind < (lines.Length - 1) && lines[ind + 1] != null && IsSame(lines[ind], lines[ind + 1], pos)) ind++;
-
                     int end = ind;
-                    Types t = Types.NONE;
 
+                    Types t = Types.None;
                     for (int i = start; i <= end; i++)
                         t |= lines[i][pos].GetTypes();
 
@@ -52,7 +37,7 @@ namespace DnaCompression.Lib
                         Types.R, Types.A, Types.C, Types.G, Types.T
                     })
                     {
-                        if (t == Types.NONE) break;
+                        if (t == Types.None) break;
 
                         if ((t & tt) == tt)
                         {

@@ -5,8 +5,74 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DnaCompression"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="DNA compressor" Height="700" Width="600"
+        WindowStartupLocation="CenterScreen"
+        >
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Button Content="Compress" Width="80" Height="20" Grid.Column="1" Grid.Row="0"></Button>
+
+        <Label Grid.Column="0" Grid.Row="0">Input</Label>
+        <Label Grid.Column="2" Grid.Row="0">Output</Label>
+       
+
+        <TabControl  Grid.Column="0" Grid.Row="2" VerticalAlignment="Stretch">
+            <TabItem Header="TextBox" IsSelected="{Binding InputAsText}">
+                <TextBox AcceptsReturn="True" Text="{Binding InputTextBox}"
+                         HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"></TextBox>
+            </TabItem>
+            <TabItem Header="File">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Button Content="..." Command="{Binding ChooseInputFile}" Margin="5" Padding="2"></Button>
+                    <TextBox Grid.Column="1" Text="{Binding InputFileName}"></TextBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+
+        <TabControl  Grid.Column="2" Grid.Row="2" VerticalAlignment="Stretch">
+            <TabItem Header="TextBox" IsSelected="{Binding OutputAsText}" >
+                <TextBox AcceptsReturn="True" Text="{Binding OutputTextBox}"
+                         HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"></TextBox>
+            </TabItem>
+            <TabItem Header="File">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Button Content="..." Command="{Binding ChooseOutputFile}" Margin="5" Padding="2"></Button>
+                    <TextBox Grid.Column="1" Text="{Binding OutputFileName}"></TextBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <ProgressBar Grid.Column="0" Grid.Row="1" Margin="2" Grid.ColumnSpan="3" Height="20" VerticalAlignment="Top" ></ProgressBar>
+
     </Grid>
 </Window>

@@ -1,33 +1,25 @@
-﻿using System;
-
-namespace DnaCompression.Lib
+﻿namespace DnaCompression.Lib
 {
     internal class CountingSort
     {
-        public void sort(String[] a, int w, int shift, int n, string[] aux)
+        public void Sort(string[] a, int w, int shift, int n, string[] aux)
         {
-            int R = 21;   // extend ASCII alphabet size	
+            int R = 21;
 
             for (int d = 0; d < w; d++)
             {
                 var ind = (shift + d) % w;
 
-                // sort by key-indexed counting on dth character
-
-                // compute frequency counts
                 int[] count = new int[R + 1];
                 for (int i = 0; i < n; i++)
                     count[GetInd(a[i], ind) + 1]++;
 
-                // compute cumulates
                 for (int r = 0; r < R; r++)
                     count[r + 1] += count[r];
 
-                // move data
                 for (int i = 0; i < n; i++)
                     aux[count[GetInd(a[i], ind)]++] = a[i];
 
-                // copy back
                 for (int i = 0; i < n; i++)
                     a[i] = aux[i];
             }
@@ -61,6 +53,5 @@ namespace DnaCompression.Lib
 
             return 0;
         }
-
     }
 }

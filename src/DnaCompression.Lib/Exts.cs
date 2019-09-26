@@ -44,7 +44,7 @@
                 case 'S': return Types.S;
                 case 'W': return Types.W;
                 case 'R': return Types.R;
-                default: return Types.NONE;
+                default: return Types.None;
             }
         }
     }

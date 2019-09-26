@@ -5,7 +5,7 @@ namespace DnaCompression.Lib
     [Flags]
     public enum Types
     {
-        NONE = 0,
+        None = 0,
         A = 1,
         C = 1 << 1,
         G = 1 << 2,
