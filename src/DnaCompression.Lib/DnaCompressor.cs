@@ -1,10 +1,11 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace DnaCompression.Lib
 {
     public class DnaCompressor
     {
-        public void Compress(string[] lines)
+        public void Compress(string[] lines, IProgress<int> progress)
         {
             var tmp = new string[lines.Length];
 
@@ -53,9 +54,12 @@ namespace DnaCompression.Lib
                         lines[i] = null;
                 }
 
-
                 n = Scroll(lines, n);
+
+                progress.Report((100 * pos) / maxpos);
             }
+
+            progress.Report(100);
         }
 
         internal static int Scroll(string[] lines, int n)

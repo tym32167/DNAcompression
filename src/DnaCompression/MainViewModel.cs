@@ -1,9 +1,15 @@
-﻿using System;
-using DnaCompression.Annotations;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
+﻿using DnaCompression.Annotations;
+using DnaCompression.Lib;
 using Microsoft.Win32;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 
 namespace DnaCompression
@@ -17,6 +23,8 @@ namespace DnaCompression
         private string _outputFileName;
         private bool _inputAsText = true;
         private bool _outputAsText = true;
+        private bool _isInIdle = true;
+        private int _progress;
 
         public string InputTextBox
         {
@@ -82,15 +90,90 @@ namespace DnaCompression
         public ICommand ChooseInputFile { get; set; }
         public ICommand ChooseOutputFile { get; set; }
 
+        public ICommand CompressCommand { get; set; }
+
         public MainViewModel()
         {
-            ChooseInputFile = new DelegateCommand( ob=>InputFileName = ChoseFile(), CanExecuteCommands);
+            ChooseInputFile = new DelegateCommand(ob => InputFileName = ChoseFile(), CanExecuteCommands);
             ChooseOutputFile = new DelegateCommand(ob => OutputFileName = ChoseFile(), CanExecuteCommands);
+            CompressCommand = new DelegateCommand(ob => Compress(), CanExecuteCommands);
+        }
+
+        private async void Compress()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+
+                IsInIdle = false;
+                CommandManager.InvalidateRequerySuggested();
+
+                var progress = new Progress<int>();
+                progress.ProgressChanged += (s, e) => Progress = e;
+
+
+                string[] input;
+
+                if (InputAsText)
+                    input = InputTextBox.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                else
+                    input = File.ReadAllLines(InputFileName);
+
+                await Task.Run(() =>
+                {
+                    var compressor = new DnaCompressor();
+                    compressor.Compress(input, progress);
+                });
+
+                var output = input.Where(l => l != null).OrderBy(x=>x).ToArray();
+
+                if (OutputAsText) OutputTextBox = string.Join(Environment.NewLine, output);
+                else File.WriteAllLines(OutputFileName, output);
+
+                sw.Stop();
+
+                MessageBox.Show($"Input: {input.Length}, Output: {output.Length}, Elapsed: {sw.Elapsed}", 
+                    "Done.", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsInIdle = true;
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        public int Progress
+        {
+            get => _progress;
+            set
+            {
+                _progress = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
+        public bool IsInIdle
+        {
+            get => _isInIdle;
+            set
+            {
+                if (value == _isInIdle) return;
+                _isInIdle = value;
+                OnPropertyChanged();
+            }
         }
 
         private bool CanExecuteCommands(object parameter)
         {
-            return true;
+            return IsInIdle;
         }
 
         private static string ChoseFile()

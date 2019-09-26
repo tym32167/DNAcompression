@@ -96,5 +96,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DnaCompression.Lib\DnaCompression.Lib.csproj">
+      <Project>{90152B1E-6DB2-4C19-A0C3-9AB1B3C441EB}</Project>
+      <Name>DnaCompression.Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
