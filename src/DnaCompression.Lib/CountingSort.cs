@@ -1,6 +1,6 @@
 ﻿namespace DnaCompression.Lib
 {
-    internal class CountingSort
+    public class CountingSort
     {
         public void Sort(string[] a, int w, int shift, int n, string[] aux)
         {
