@@ -15,10 +15,10 @@ namespace DnaCompression.Lib
 
             var sorter = new CountingSort();
 
+            sorter.Sort(lines, lines[0].Length, 0, n, tmp);
+
             for (var pos = 0; pos < maxpos; pos++)
             {
-                sorter.Sort(lines, lines[0].Length, pos, n, tmp);
-
                 var ind = 0;
 
                 while (ind < lines.Length && lines[ind] != null)
@@ -56,6 +56,8 @@ namespace DnaCompression.Lib
 
                 n = Scroll(lines, n);
 
+                sorter.SortOnce(lines, lines[0].Length, pos, n, tmp);
+
                 progress.Report((100 * pos) / maxpos);
             }
 
@@ -64,21 +66,23 @@ namespace DnaCompression.Lib
 
         internal static int Scroll(string[] lines, int n)
         {
-            int startInd = 0; int endInd = n - 1;
-            while (startInd < endInd)
+            int nextNull = 0;
+            int nextData = 0;
+
+            while (nextData < n && nextNull < n)
             {
-                while (startInd < endInd && lines[startInd] != null) startInd++;
-                while (startInd < endInd && lines[endInd] == null) endInd--;
-                if (startInd < endInd)
+                while (nextNull < n && lines[nextNull] != null) nextNull++;
+                if (nextNull > nextData) nextData = nextNull + 1;
+                while (nextData < n && lines[nextData] == null) nextData++;
+
+                if (nextData < n && nextData > nextNull)
                 {
-
-                    lines[startInd] = lines[endInd];
-                    lines[endInd] = null;
+                    lines[nextNull] = lines[nextData];
+                    lines[nextData] = null;
                 }
-
             }
-            n = endInd + 1;
-            return n;
+
+            return nextNull;
         }
 
         internal static bool IsSame(string s1, string s2, int except)

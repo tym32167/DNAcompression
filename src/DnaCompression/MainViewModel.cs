@@ -92,11 +92,57 @@ namespace DnaCompression
 
         public ICommand CompressCommand { get; set; }
 
+        public ICommand ValidationCommand { get; set; }
+
         public MainViewModel()
         {
             ChooseInputFile = new DelegateCommand(ob => InputFileName = ChoseFile(), CanExecuteCommands);
             ChooseOutputFile = new DelegateCommand(ob => OutputFileName = ChoseFile(), CanExecuteCommands);
             CompressCommand = new DelegateCommand(ob => Compress(), CanExecuteCommands);
+            ValidationCommand = new DelegateCommand(ob => Validate(), CanExecuteCommands);
+        }
+
+        private async void Validate()
+        {
+            try
+            {
+                IsInIdle = false;
+                CommandManager.InvalidateRequerySuggested();
+
+                string[] input;
+
+                if (InputAsText)
+                    input = InputTextBox.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                else
+                    input = File.ReadAllLines(InputFileName);
+
+
+                string[] output;
+
+                if (InputAsText)
+                    output = OutputTextBox.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                else
+                    output = File.ReadAllLines(OutputFileName);
+
+                var validator = new DnaCompressorValidator();
+
+                var result = await Task.Run(() => validator.Validate(input, output));
+
+                if (result.IsValid)
+                    MessageBox.Show("Result is valid", "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
+                else
+                    MessageBox.Show(result.Message, "Validation", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsInIdle = true;
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         private async void Compress()
@@ -126,14 +172,14 @@ namespace DnaCompression
                     compressor.Compress(input, progress);
                 });
 
-                var output = input.Where(l => l != null).OrderBy(x=>x).ToArray();
+                var output = input.Where(l => l != null).OrderBy(x => x).ToArray();
 
                 if (OutputAsText) OutputTextBox = string.Join(Environment.NewLine, output);
                 else File.WriteAllLines(OutputFileName, output);
 
                 sw.Stop();
 
-                MessageBox.Show($"Input: {input.Length}, Output: {output.Length}, Elapsed: {sw.Elapsed}", 
+                MessageBox.Show($"Input: {input.Length}, Output: {output.Length}, Elapsed: {sw.Elapsed}",
                     "Done.", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }

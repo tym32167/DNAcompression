@@ -25,6 +25,26 @@
             }
         }
 
+        public void SortOnce(string[] a, int w, int d, int n, string[] aux)
+        {
+            int R = 21;
+
+            var ind = d % w;
+
+            int[] count = new int[R + 1];
+            for (int i = 0; i < n; i++)
+                count[GetInd(a[i], ind) + 1]++;
+
+            for (int r = 0; r < R; r++)
+                count[r + 1] += count[r];
+
+            for (int i = 0; i < n; i++)
+                aux[count[GetInd(a[i], ind)]++] = a[i];
+
+            for (int i = 0; i < n; i++)
+                a[i] = aux[i];
+        }
+
 
         private static int GetInd(string s, int p)
         {
